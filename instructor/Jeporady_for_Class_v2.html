@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PROS Jeopardy Game</title>
+    <link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+    <style>
+        /* Your CSS styles here */
+        body {
+            font-family: 'Titillium Web', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 160vh; /* 100% of the viewport height */
+            margin: 0; /* Remove default margin to center properly */
+        }
+
+        /* Centering styles for the game-board */
+        #game-board {
+            /* The existing centering styles for game-board (if any) */
+        }
+
+        /* Styles for the content container */
+        #content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .category-header {
+            font-weight: bold;
+        }
+
+        .question-cell {
+            width: 150px;
+            height: 100px;
+            background-color: #0074c7;
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
+            user-select: none;
+            border: 2px solid #004881;
+        }
+
+        .answer-option {
+            display: none;
+        }
+
+        .player-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            margin-right: 10px; /* Adjust the margin as needed */
+        }
+
+        .offset-input,
+        #player-dropdown {
+            width: 100px; /* Adjust the width as needed */
+            height: 28px; /* Adjust the height as needed */
+        }
+
+        button {
+            font-family: 'Titillium Web', sans-serif;
+            padding: 5px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        #question-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        #action-buttons {
+            display: flex;
+            align-items: center;
+            margin-top: 10px; /* Add some top margin to separate it from the game board */
+        }
+
+        #player-dropdown {
+            margin-right: 10px; /* Add some right margin to separate it from the buttons */
+        }
+
+        button {
+            font-family: 'Titillium Web', sans-serif;
+            padding: 5px;
+            margin: 0; /* Reset margin to 0 for the buttons inside the container */
+        }
+
+        .pop-up-header {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        /* Styling for answer options */
+        #answer-options {
+            margin-top: 10px;
+        }
+
+        /* Styling for the submit-answer button */
+        #submit-answer {
+            display: block;
+            margin-top: 10px;
+        }
+
+        #last-selected-cell {
+            margin-top: 5px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            width: 1075px;
+        }
+
+        #last-selected-info {
+            display: flex;
+            justify-content: space-between; /* Position elements at each end of the container */
+            width: 250px;
+        }
+
+        #last-selected-category {
+            margin: 0;
+        }
+
+        #last-selected-value {
+            margin: 0;
+        }
+
+        /* New CSS styles for button alignment */
+        .button-container {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .button-container button {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+     <img src="https://s28006.pcdn.co/wp-content/uploads/2023/07/PROS_Logo_AI_FA_v1r5_FC1.png" alt="Your Image Description" width="175" height="35">
+    <h1>Smart Price Management</h1>
+    <div id="game-board">
+        <table>
+            <tr class="category-header">
+                <th>Category 1</th>
+                <th>Category 2</th>
+                <th>Category 3</th>
+                <th>Category 4</th>
+                <th>Category 5</th>
+                <th>Category 6</th>
+                <th>Category 7</th>
+            </tr>
+            <tr span style="font-size: 28px">
+                <td class="question-cell" id="q1c1">$100</td>
+                <td class="question-cell" id="q1c2">$100</td>
+                 <td class="question-cell" id="q1c3">$100</td>
+                 <td class="question-cell" id="q1c4">$100</td>
+                 <td class="question-cell" id="q1c5">$100</td>
+                <td class="question-cell" id="q1c6">$100</td>
+                <td class="question-cell" id="q1c7">$100</td>
+            </tr>
+            <tr span style="font-size: 28px">
+                <td class="question-cell" id="q2c1">$200</td>
+                <td class="question-cell" id="q2c2">$200</td>
+                <td class="question-cell" id="q2c3">$200</td>
+                 <td class="question-cell" id="q2c4">$200</td>
+                 <td class="question-cell" id="q2c5">$200</td>
+                <td class="question-cell" id="q2c6">$200</td>
+                <td class="question-cell" id="q2c7">$200</td>
+            </tr>
+            <tr span style="font-size: 28px">
+                <td class="question-cell" id="q3c1">$300</td>
+                <td class="question-cell" id="q3c2">$300</td>
+                <td class="question-cell" id="q3c3">$300</td>
+                 <td class="question-cell" id="q3c4">$300</td>
+                 <td class="question-cell" id="q3c5">$300</td>
+                <td class="question-cell" id="q3c6">$300</td>
+                <td class="question-cell" id="q3c7">$300</td>
+                
+            </tr>
+             <tr span style="font-size: 28px">
+                <td class="question-cell" id="q4c1">$400</td>
+                <td class="question-cell" id="q4c2">$400</td>
+                 <td class="question-cell" id="q4c3">$400</td>
+                 <td class="question-cell" id="q4c4">$400</td>
+                 <td class="question-cell" id="q4c5">$400</td>
+                 <td class="question-cell" id="q4c6">$400</td>
+                 <td class="question-cell" id="q4c7">$400</td>
+            </tr>
+             <tr span style="font-size: 28px">
+                <td class="question-cell" id="q5c1">$500</td>
+                <td class="question-cell" id="q5c2">$500</td>
+                 <td class="question-cell" id="q5c3">$500</td>
+                 <td class="question-cell" id="q5c4">$500</td>
+                 <td class="question-cell" id="q5c5">$500</td>
+                 <td class="question-cell" id="q5c6">$500</td>
+                 <td class="question-cell" id="q5c7">$500</td>
+            </tr>
+        </table>
+    </div>
+
+     <div id="question-container" style="display: none; font-size: 22px;">
+        <h2>Question</h2>
+        <p id="question-text">Select a question to answer.</p>
+       
+    <div id="answer-options" style="font-size: 16px;">
+    <h3>Answer Options:</h3>
+    <!-- Replace the <ul> with radio buttons -->
+    <label><input type="radio" name="answer" value="0"> <span id="answer-0"></span></label><br>
+    <label><input type="radio" name="answer" value="1"> <span id="answer-1"></span></label><br>
+    <label><input type="radio" name="answer" value="2"> <span id="answer-2"></span></label><br>
+</div>
+         
+<button id="submit-answer">Submit</button>
+<p id="answer-feedback"></p>
+        <p id="answer-feedback"></p>
+    </div>
+    
+    <div id="last-selected-cell">
+    <h2>Last Selected Cell</h2>
+    <div id="last-selected-info">
+        <p id="last-selected-category">Section:</p>
+        <p id="last-selected-value">Value:</p>
+    </div>
+</div>
+     <label for="player-dropdown">Team Selection and Awards:</label>
+    <div class="button-container">
+        <select id="player-dropdown"></select>
+        <button id="award-points">Award Team All Points</button>
+        <button id="award-half-points">Award Team Half Points</button>
+        <button id="undo-award">Undo</button>
+    </div>
+    <div id="scoreboard">
+        <h2>Scoreboard</h2>
+        <ul id="players">
+            <!-- Player scores will be displayed here -->
+        </ul>
+    </div>
+
+    <script>
+        // Define your game logic here using JavaScript
+        const categories = ['Category 1', 'Category 2','Category 3','Category 4','Category 5','Category 6', 'Category 7'];
+        const questions = {
+             'Category 1': [
+                {
+                    value: 100,
+                    question: 'CAT1 $100 - What is the primary purpose of PROS Pricing within the PROS Smart Price Management?',
+                    answers: [
+                        { text: 'A - Set, Manage, and Publish Prices', correct: true },
+                        { text: 'B - Analyze Historical Price Records and Output Reports', correct: false },
+                        { text: 'C - Manage Inventory and Produce Quotes', correct: false },
+                    ],
+                },
+                 {
+                    value: 200,
+                    question: 'CAT1 $200 - What does output mean?',
+                    answers: [
+                       { text: 'A - Data is sent to an external system', correct: true },
+                        { text: 'B - New Price is sent to Approver', correct: false },
+                        { text: 'C - Master Price List has been exported', correct: false },
+                    ],
+                },
+                 {
+                    value: 300,
+                    question: 'CAT1 $300 - Which is not considered a component type?',
+                    answers: [
+                       { text: 'A - Discount', correct: true },
+                        { text: 'B - Basic', correct: false },
+                        { text: 'C - Scaled', correct: false },
+                        { text: 'D - Intraday / Timestamp', correct: false },
+                    ],
+                },
+                 {
+                    value: 400,
+                    question: 'CAT1 $400 - A component type upload code is optional unless price output is required?',
+                    answers: [
+                      { text: 'A - False', correct: false },
+                        { text: 'B - True', correct: true },
+                          { text: '', correct: false },
+                    ],
+                },
+                 {
+                    value: 500,
+                    question: 'CAT1 1X FREE BONUS - $500',
+                    answers: [
+                      { text: 'CONGRATULATIONS! - $500', correct: true },
+                        { text: '', correct: false },
+                        { text: '', correct: false },
+                    ],
+                },
+                // Add more questions here...
+            ],
+            'Category 2': [
+                {
+                    value: 100,
+                    question: 'CAT2 $100 - What is the Filter bar?',
+                    answers: [
+                      { text: 'A - Allows users to easily filter User Profiles', correct: false },
+                        { text: 'B - Allows users to filter by dimensional scope within the Master Price List', correct: true },
+                        { text: 'C - Allows users to access and filter System Administrator tools', correct: false },
+                    ],
+                },
+                 {
+                    value: 200,
+                    question: 'CAT2 $200 - What is an upload code?',
+                    answers: [
+                      { text: 'A - Code to Input / Output data to external system', correct: true },
+                        { text: 'B - Code to only Output data to external system', correct: false },
+                        { text: 'C - Code to only Input data to external system', correct: false },
+                    ],
+                },
+                 {
+                    value: 300,
+                    question: 'CAT2 3X FREE BONUS - $300 ($900) ',
+                    answers: [
+                       { text: 'CONGRATULATIONS! - $900', correct: true },
+                        { text: '', correct: false },
+                        { text: '', correct: false },
+                    ],
+                },
+                 {
+                    value: 400,
+                    question: 'CAT2 $400 - When does a New Price output to an external system and become a current price?',
+                    answers: [
+                        { text: 'A - After Approver Approves and Submits Decision', correct: true },
+                        { text: 'B - Immediately after submitting*', correct: false },
+                        { text: 'C - After Approver Approves', correct: false },
+                    ],
+                },
+                 {
+                    value: 500,
+                    question: 'CAT2 $500 - What are the steps an approver must go through for a price to output?',
+                    answers: [
+                        { text: 'A - Approve Price', correct: false },
+                        { text: 'B - Approve & Submit Price', correct: true },
+                        { text: 'C - Validate Change & Submit Price', correct: false },
+                    ],
+                },
+                
+                // Add more questions here...
+            ],
+            'Category 3': [
+                {
+                    value: 100,
+                    question: 'CAT3 $100 - What level of the Pricing Hierarchy is a Price Item?',
+                    answers: [
+                      { text: 'A - 1', correct: false },
+                        { text: 'B - 2', correct: false },
+                        { text: 'C - 3', correct: true },
+                    ],
+                },
+                 {
+                    value: 200,
+                    question: 'CAT3 $200 - A Price Item dimensional scope is defined at what level of the Pricing Hierarchy?',
+                    answers: [
+                       { text: 'A - Component Type', correct: false },
+                        { text: 'B - Pricing Level', correct: true },
+                        { text: 'C - Master Price List', correct: false },
+                    ],
+                },
+                 {
+                    value: 300,
+                    question: 'CAT3 $300 - What level of the Pricing Hierarchy is a Pricing Level?',
+                    answers: [
+                       { text: 'A - 1', correct: false },
+                        { text: 'B - 2', correct: true },
+                        { text: 'C - 3', correct: false },
+                    ],
+                },
+                 {
+                    value: 400,
+                    question: 'CAT3 $400 - What is the purpose of setting an Effective Start Date?',
+                    answers: [
+                    { text: 'A - To immediately publish a new price using Todays Date', correct: false },
+                        { text: 'B - Prevents Price from going Live (Publishing) until the Effective Start Date', correct: true },
+                        { text: 'C - To ensure all Price Items have a consistent start date', correct: false },
+                    ],
+                },
+                 {
+                    value: 500,
+                    question: 'CAT3 $500 - Changing the effective end date on a price item to the date in the past will result in?',
+                    answers: [
+                       { text: 'A - Price Item is removed from Master Price List', correct: true },
+                        { text: 'B - Price Items new price will end, and new price will go into effect', correct: false },
+                        { text: 'C - Previous Price goes into effect', correct: false },
+                    ],
+                },
+                // Add more questions here...
+            ],
+            'Category 4': [
+                {
+                    value: 100,
+                    question: 'CAT4 $100 2X FREE BONUS ($200)',
+                    answers: [
+                        { text: 'CONGRATULATIONS - $200', correct: true },
+                        { text: '', correct: false },
+                        { text: '', correct: false },
+                    ],
+                },
+                 {
+                    value: 200,
+                    question: 'CAT4 $200 - Can I change the dimension scope of an existing Pricing Level?',
+                    answers: [
+                       { text: 'A - Yes', correct: false },
+                        { text: 'B - No', correct: true },
+                        { text: '', correct: false },
+                    ],
+                },
+                 {
+                    value: 300,
+                    question: 'CAT4 $300 - Pricing Levels require an upload code?',
+                    answers: [
+                        { text: 'A - True', correct: true },
+                        { text: 'B - False', correct: false },
+                        { text: '', correct: false },
+                    ],
+                },
+                 {
+                    value: 400,
+                    question: 'CAT4 $400 - Setting a dimension as required when configuring a Component Type usage restriction means?',
+                    answers: [
+                       { text: 'A - The dimension is a required dimension when configuring a Pricing Level', correct: true },
+                        { text: 'B - The dimension is required in all Master Price Lists', correct: false },
+                        { text: '', correct: false },
+                    ],
+                },
+                 {
+                    value: 500,
+                    question: 'CAT4 $500 - If I have a Price Record that is valid from today’s date till forever, how many Price Records will I have if I make a Price Item adjustment that is set for Dec 5th to Dec 30th?',
+                    answers: [
+                        { text: 'A - 1', correct: false },
+                        { text: 'B - 2', correct: false },
+                        { text: 'C - 3', correct: true },
+                    ],
+                },
+                // Add more questions here...
+            ],
+            'Category 5': [
+                {
+                    value: 100,
+                    question: 'CAT5 $100 - Which is not a Scale By option?',
+                    answers: [
+                      { text: 'A - Discount', correct: true },
+                        { text: 'B - Quantity', correct: false },
+                        { text: 'C - Revenue', correct: false },
+                    ],
+                },
+                 {
+                    value: 200,
+                    question: 'CAT5 $200 - Which combination are valid Scale Break calculation types?',
+                    answers: [
+                        { text: 'A - Cumulative and Revenue', correct: false },
+                        { text: 'B - Graduated and Cumulative', correct: true },
+                        { text: 'C - Discount and Graduated', correct: false },
+                    ],
+                },
+                 {
+                    value: 300,
+                    question: 'CAT5 $300 - Which combination are valid Scale Break offset types?',
+                    answers: [
+                        { text: 'A - Margin and Percent', correct: false },
+                        { text: 'B - Quantity and Volume', correct: false },
+                        { text: 'C - Numeric and Percent', correct: true },
+                    ],
+                },
+                 {
+                    value: 400,
+                    question: 'CAT5 $400 - Enabling Scale Break (as well as other Component Types) occurs in what area of the component type configuration window?',
+                    answers: [
+                        { text: 'A - Usage Restrictions', correct: false },
+                        { text: 'B - Price Details', correct: true },
+                        { text: 'C - Calculation Type', correct: false },
+                    ],
+                },
+                 {
+                    value: 500,
+                    question: 'CAT5 $500 - Scale Breaks can be used to offer Volume-Based Discounts Incentives or Surcharge Pricing?',
+                    answers: [
+                       { text: 'A - True', correct: true },
+                        { text: 'B - False', correct: false },
+                        { text: '', correct: false },
+                    ],
+                },
+                // Add more questions here...
+            ],
+            'Category 6': [
+                {
+                    value: 100,
+                    question: 'CAT6 $100 BONUS x4 ($400) - Can I go into an existing Component Type and modify the settings to make it available for Scale Breaks?',
+                    answers: [
+                        { text: 'A - Yes', correct: false },
+                        { text: 'B - No', correct: true },
+                        { text: '', correct: false },
+                    ],
+                },
+                 {
+                    value: 200,
+                    question: 'CAT6 $200 BONUS x3 ($600) - What happens if you set an Intraday price item start date before an existing price record?',
+                    answers: [
+                       { text: 'A - New start date truncates old start date; Spliced records*', correct: true },
+                        { text: 'B - The system throws an error and prevents you from setting an earlier start date.', correct: false },
+                        { text: 'C - Existing price records are unaffected', correct: false },
+                    ],
+                },
+                 {
+                    value: 300,
+                    question: 'CAT6 $300 - Can you change Intraday prices to go through an approval workflow instead of being auto-approved?',
+                    answers: [
+                        { text: 'A - Yes', correct: false },
+                        { text: 'B- No', correct: true },
+                        { text: '', correct: false },
+                    ],
+                },
+                 {
+                    value: 400,
+                    question: 'CAT6 $400 - Where do you change the default start time (in the adjust price window) for Intraday prices??',
+                    answers: [
+                      { text: 'A - System Parameters', correct: true },
+                        { text: 'B - In the Component Type configuration window', correct: false },
+                        { text: 'C - Advanced Settings', correct: false },
+                    ],
+                },
+                 {
+                    value: 500,
+                    question: 'CAT6 $500 - Conversions have been loaded for USD to JPY.  A Price Item is priced in USD, will you be able to adjust the price of the price item by a JPY value?',
+                    answers: [
+                       { text: 'A - No, The exchange rate must be defined forward and backward and will display an error', correct: true },
+                        { text: 'B - Yes, as long as the exchange rate is defined for USD to JPY', correct: false },
+                        { text: 'C - Yes, but the exchange rate will default to USD and display an error', correct: false },
+                    ],
+                },
+                // Add more questions here...
+            ],
+            'Category 7': [
+                {
+                    value: 100,
+                    question: 'CAT7 $100 - What does Intraday pricing allow you to do?',
+                    answers: [
+                        { text: 'A - Automatically Approve Prices', correct: false },
+                        { text: 'B - Set prices multiple times per day', correct: false },
+                        { text: 'C - All of the Above', correct: true },
+                    ],
+                },
+                 {
+                    value: 200,
+                    question: 'CAT7 $200 - Where is the default bridge currency defined?',
+                    answers: [
+                        { text: 'A - In the SCF as GlobalCurrencyCode= ', correct: true },
+                        { text: 'B - System Parameters', correct: false },
+                        { text: 'C - In the SCF as BridgeCurrencyCode=', correct: false },
+                    ],
+                },
+                 {
+                    value: 300,
+                    question: 'CAT7 $300 - Can you define a customer-specific exchange rate in PROS Pricing?',
+                    answers: [
+                       { text: 'A - Yes, using Negotiated Exchange Rates', correct: true },
+                        { text: 'B - No, only for Product Dimension', correct: false },
+                        { text: 'C - Yes, using Default Exchange Rates', correct: false },
+                        ],
+                },
+                 {
+                    value: 400,
+                    question: 'CAT1 $400 BONUS x2 ($800) - Can you set a PRODUCT unit of measure to use an alternate PRODUCT-specific unit of measure?',
+                    answers: [
+                       { text: 'A - Yes. Product is the only dimension that can be used.', correct: true },
+                        { text: 'B - No, Customer is the only dimension that can be used', correct: false },
+                        { text: 'C - Yes, all dimensions can use PRODUCT-specific unit of measure', correct: false },
+                    ],
+                },
+                 {
+                    value: 500,
+                    question: 'CAT1 $500 - What is the definition of the term Dimension as it pertains to unit of measure conversion and loading?',
+                    answers: [
+                      { text: 'A - A Group of Units', correct: true },
+                        { text: 'B - Dimensions and Levels', correct: false },
+                        { text: 'C - Sorting and Filtering', correct: false },
+                    ],
+                },
+                // Add more questions here...
+            ],
+        };
+
+        let currentPlayer = 0;
+        let players = [];
+        let selectedQuestion = null;
+        let lastAwardedPlayerIndex = null;
+
+        function initGame() {
+            // Create players and initialize their scores
+            const numPlayers = 5; // Change this to the number of players you want
+            for (let i = 1; i <= numPlayers; i++) {
+                players.push({ name: `Team ${i}`, score: 0 });
+            }
+            displayPlayers();
+            populatePlayerDropdown();
+        }
+
+          function displayPlayers() {
+        const playersList = document.getElementById('players');
+        playersList.innerHTML = '';
+        players.forEach((player, index) => {
+            const playerItem = document.createElement('li');
+            playerItem.innerHTML = `
+                <div class="player-item">
+                    <div class="player-info">
+                        ${player.name}: $<span id="score-${index}">${player.score.toFixed(0)}<span>
+                    </div>
+                    <div class="player-info">
+                        <input type="number" id="offset-${index}" class="offset-input" placeholder="Offset">
+                        <button id="submit-offset-${index}">Submit Offset</button>
+                    </div>
+                </div>
+            `;
+            playersList.appendChild(playerItem);
+
+            // Add event listener for submitting the offset
+            const offsetInput = document.getElementById(`offset-${index}`);
+            const submitOffsetButton = document.getElementById(`submit-offset-${index}`);
+            submitOffsetButton.addEventListener('click', () => {
+                const offsetValue = parseInt(offsetInput.value) || 0;
+                player.score += offsetValue;
+                displayPlayers();
+                offsetInput.value = ''; // Clear the offset input field
+            });
+        });
+    }
+
+
+        function populatePlayerDropdown() {
+            const playerDropdown = document.getElementById('player-dropdown');
+            playerDropdown.innerHTML = '';
+            players.forEach((player, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.text = player.name;
+                playerDropdown.appendChild(option);
+            });
+        }
+
+       function displayQuestion(category, value) {
+
+    const questionContainer = document.getElementById('question-container');
+    questionContainer.style.display = 'block';
+
+    const questionText = document.getElementById('question-text');
+    selectedQuestion = { category, value };
+    const question = questions[category].find(q => q.value === value);
+ 
+
+    // Display the question text
+    questionText.innerText = question.question;
+
+    // Display answer options and set up event listeners
+    const answerOptions = document.getElementById('answer-options');
+    const answerList = document.querySelectorAll('input[type="radio"]');
+    answerList.forEach((radio, index) => {
+        const answerText = document.getElementById('answer-' + index);
+        const answer = question.answers[index];
+
+        // Display answer text and set up radio button values
+        answerText.innerText = answer.text;
+        radio.value = index;
+
+        // Handle the answer selection
+        radio.addEventListener('click', () => {
+            if (radio.checked) {
+                selectedAnswerIndex = parseInt(radio.value);
+            }
+        });
+    });
+}
+   const submitAnswerButton = document.getElementById('submit-answer');
+        const questionContainer = document.getElementById('question-container');
+
+submitAnswerButton.addEventListener('click', () => {
+    if (selectedAnswerIndex !== null && selectedQuestion) {
+        const value = selectedQuestion.value;
+        const answer = questions[selectedQuestion.category][value / 100 - 1].answers[selectedAnswerIndex];
+        const answerFeedback = document.getElementById('answer-feedback');
+        
+        if (answer.correct) {
+            answerFeedback.innerText = 'Correct';
+            answerFeedback.style.color = 'white';
+            answerFeedback.style.fontWeight = 'bold';
+            answerFeedback.style.backgroundColor = 'green';
+        } else {
+            answerFeedback.innerText = 'Incorrect';
+            answerFeedback.style.color = 'white';
+            answerFeedback.style.fontWeight = 'bold';
+            answerFeedback.style.backgroundColor = 'red';
+        }
+
+        answerFeedback.style.width = '800px'; // Set the width to '200px'
+         setTimeout(() => {
+            answerFeedback.innerText = ''; // Clear the text
+            answerFeedback.style.backgroundColor = ''; // Reset the background color
+        }, 2000); // Display for 4 seconds (4000 milliseconds)
+setTimeout(() => {
+            questionContainer.style.display = 'none'; // Close the pop-up window
+        }, 2000); // Close after 5 seconds (5000 milliseconds)
+    
+    }
+});
+        const awardPointsButton = document.getElementById('award-points');
+        awardPointsButton.addEventListener('click', () => {
+            const playerDropdown = document.getElementById('player-dropdown');
+            const selectedPlayerIndex = playerDropdown.value;
+
+            if (selectedQuestion) {
+                const value = selectedQuestion.value;
+                players[selectedPlayerIndex].score += value;
+                lastAwardedPlayerIndex = selectedPlayerIndex;
+                displayPlayers();
+                questionContainer.style.display = 'none';
+            }
+
+            // Switch to the next player
+            currentPlayer = (currentPlayer + 1) % players.length;
+        });
+        
+         const awardHalfPointsButton = document.getElementById('award-half-points');
+    awardHalfPointsButton.addEventListener('click', () => {
+        const playerDropdown = document.getElementById('player-dropdown');
+        const selectedPlayerIndex = playerDropdown.value;
+
+        if (selectedQuestion) {
+            const value = selectedQuestion.value / 2; // Award half points
+            players[selectedPlayerIndex].score += value;
+            lastAwardedPlayerIndex = selectedPlayerIndex;
+            displayPlayers();
+            questionContainer.style.display = 'none';
+        }
+
+        // Switch to the next player
+        currentPlayer = (currentPlayer + 1) % players.length;
+    });
+
+        const undoAwardButton = document.getElementById('undo-award');
+        undoAwardButton.addEventListener('click', () => {
+            if (lastAwardedPlayerIndex !== null && selectedQuestion) {
+                const value = selectedQuestion.value;
+                players[lastAwardedPlayerIndex].score -= value;
+                displayPlayers();
+            }
+        });
+
+       // Add event listeners to the cells in the game board
+const cells = document.querySelectorAll('.question-cell');
+const lastSelectedCategory = document.getElementById('last-selected-category');
+const lastSelectedValue = document.getElementById('last-selected-value');
+
+cells.forEach(cell => {
+    cell.addEventListener('click', () => {
+        const categoryIndex = cell.cellIndex;
+        const value = parseInt(cell.innerText.substr(1));
+        const category = categories[categoryIndex];
+
+        if (cell.style.backgroundColor === 'black') {
+            // If the cell is black (selected), change it back to blue
+            cell.style.backgroundColor = '#0074c7'; // Original blue
+            lastSelectedCategory.innerText = 'Section:';
+            lastSelectedValue.innerText = 'Value:';
+            lastSelectedValue.style.fontWeight = 'bold';
+            
+        } else {
+            // Change the color to black when selected
+            cell.style.backgroundColor = 'black';
+            lastSelectedCategory.innerText = 'Section: ' + category;
+            lastSelectedValue.innerText = 'Value: $' + value;
+        }
+
+        // Display the question and handle the game logic
+        displayQuestion(category, value);
+    });
+});
+        
+
+        // Start the game
+        initGame();
+        
+        
+      
+      
+
+// In the submitAnswerButton event listener:
+submitAnswerButton.addEventListener('click', () => {
+  
+});
+
+// In the undoAwardButton event listener and other places where you close the question:
+undoAwardButton.addEventListener('click', () => {
+  
+    
+});  
+    </script>
+</body>
+</html>
