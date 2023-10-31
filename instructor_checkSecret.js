@@ -8,7 +8,7 @@
       const password = document.getElementById('password').value;
 
       // Define the correct password
-      const correctPassword = 'Apple001train';
+      const correctPassword = 'Trainer@PROS#01';
 
       // Check if the entered password matches the correct password
       if (password === correctPassword) {
