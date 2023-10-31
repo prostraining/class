@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day 1 - Pricing Review</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <style>
+            body {
+            font-family: 'Montserrat', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+.overlay-correct {
+    display: none;
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(70, 211, 0, 0.9); /* Green overlay for "Correct Answer" */
+    z-index: 1;
+    text-align: center; /* Center-align the text horizontally */
+}
+
+.overlay-text-correct {
+        font-size: 48px;
+        font-weight: bold;
+        color: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+.overlay-incorrect {
+    display: none;
+    position: fixed;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 0, 0, 0.9); /* Red overlay for "Wrong Answer" */
+    z-index: 1;
+    text-align: center; /* Center-align the text horizontally */
+}
+
+.overlay-text-incorrect {
+     font-size: 48px;
+        font-weight: bold;
+        color: white;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+        /* Add margin space and style for answer choices */
+        #choices-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        #choices-list li {
+            margin: 10px 0; /* Add margin space between answer choices */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #choices-list button {
+            width: 300px; /* Set a fixed width for all answer choice boxes */
+            height: 50px; /* Set a fixed height for all answer choice boxes */
+            background-color: white; /* White background */
+            border: 1px solid #ccc; /* Add a border for distinction */
+            border-radius: 5px; /* Add rounded corners */
+            cursor: pointer;
+            transition: background-color 0.3s; /* Add a transition effect for hover */
+        }
+
+        #choices-list button:hover {
+            background-color: #f0f0f0; /* Change background color on hover */
+        }
+        
+        
+        .next-button {
+    background-color: #08afff; /* Blue background color for "Next Question" button */
+    color: white; /* Text color to make it more visible on a blue background */
+    border: none; /* Remove the border to make it look cleaner */
+    padding: 10px 20px; /* Add padding to the button for better spacing */
+    cursor: pointer;
+}
+
+.next-button:hover {
+    background-color: darkgray; /* Change background color on hover to a darker shade of blue */
+}
+        
+.previous-button {
+    background-color: orange; /* Orange background color for "Next Question" button */
+    color: white; /* Text color to make it more visible on a orange background */
+    border: none; /* Remove the border to make it look cleaner */
+    padding: 10px 20px; /* Add padding to the button for better spacing */
+    cursor: pointer;
+}
+
+.previous-button:hover {
+    background-color: darkorange; /* Change background color on hover to a darker shade of blue */
+}
+    </style>
+</head>
+<body>
+    <img src="https://s28006.pcdn.co/wp-content/uploads/2023/07/PROS_Logo_AI_FA_v1r5_FC1.png" alt="Your Image Description" width="175" height="35">
+    <h1>Smart Price Management - Day 1 Review</h1>
+    <div id="question-container">
+        <p id="question-text"></p>
+        <ul id="choices-list">
+            <!-- Choices will be populated dynamically using JavaScript -->
+        </ul>
+    </div>
+    
+   <div id="navigation-container">
+    <button class="previous-button" onclick="previousQuestion()">Previous Question</button>
+    <button class="next-button" onclick="nextQuestion()">Next Question</button>
+</div>
+    
+    <!-- Overlay for "Correct" -->
+    <div class="overlay-correct" id="correct-overlay">
+        <p class="overlay-text-correct">Correct!</p>
+    </div>
+    <!-- Overlay for "Wrong Answer" -->
+    <div class="overlay-incorrect" id="wrong-overlay">
+        <p class="overlay-text-incorrect">Wrong Answer!</p>
+    </div>
+
+    <!-- Persistent Score Display -->
+    <div id="score-display">
+        <p id="score-text">Score:</p>
+    </div>
+    <audio id="correct-sound">
+    <source src="https://bigsoundbank.com/UPLOAD/mp3/1831.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+     <audio id="incorrect-sound">
+    <source src="https://bigsoundbank.com/UPLOAD/mp3/2721.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+    <script>
+     const questions = [
+    {
+        question: "What is the primary purpose of PROS Pricing within the PROS Smart Price Management?",
+        choices: ["A. Set, Manage, and Publish Prices", "B. Analyze Historical Price Records and Output Reports", "C. Manage Inventory and Produce Quotes"],
+        correct: 0 // 
+    },
+          {
+        question: "What is the Filter bar?",
+        choices: ["A. Allows users to easily filter User Profiles", "B. Allows users to access and filter System Administrator tools", "C. Allows users to filter by dimensional scope within the Master Price List"],
+        correct: 2 // 
+    },
+                 {
+        question: "What does output mean?",
+        choices: ["A. New Price is sent to Approver", "B. Master Price List has been exported", "C. Data is sent to an external system"],
+        correct: 2 // 
+    },
+   
+          {
+        question: "Which is not considered a component type?",
+        choices: ["A. Discount", "B. Basic", "C. Scaled", "D. Intraday / Timestamp"],
+        correct: 0 // 
+    },
+          {
+        question: "What is an upload code?",
+        choices: ["A. Code to only Output data to external system", "B. Code to only Input data to external system ", "C. Code to Input / Output data to external system"],
+        correct: 2 // 
+    },
+    {
+        question: "When does a 'New Price' output to an external system and become a current price?",
+        choices: ["A. Immediately after submitting*", "B. After Approver Approves", "C. After Approver Approves and Submits Decision"],
+        correct: 2 //
+    },
+    {
+        question: "What are the steps an approver must go through for a price to output?",
+        choices: ["A. Approve Price", "B. Approve & Submit Price", "C. Validate Change & Submit Price"],
+        correct: 1 // 
+    },
+   
+   
+    {
+        question: "A component type upload code is optional unless price output is required?",
+        choices: ["A. True", "B. False"],
+        correct: 0 // 
+    },
+    {
+        question: "What level of the Pricing Hierarchy is a Price Item?",
+        choices: ["A. 1", "B. 2", "C. 3", "D. 4"],
+        correct: 2 // 
+    },
+          {
+        question: "A Price Item dimensional scope is defined at what level of the Pricing Hierarchy?",
+        choices: ["A. Component Type", "B. Pricing Level", "C. Master Price List", "D. None of the above"],
+        correct: 1 // 
+    },
+    {
+        question: "What is the purpose of setting an Effective Start Date?",
+        choices: ["A. To immediately publish a new price using Today's Date", "B. To ensure all Price Items have a consistent start date", "C. Prevents Price from going Live (Publishing) until the Effective Start Date"],
+        correct: 2 // 
+    },
+    {
+        question: "Changing the effective end date on a price item to the date in the past will result in?",
+        choices: ["A. Price Item's new price will end, and new price will go into effect", "B. Price Item is removed from Master Price List", "C. Previous Price goes into effect"],
+        correct: 1 // 
+    },
+    {
+        question: "When applying a pricing method, using the temporary option means?",
+        choices: ["A. One-time recalculation using the selected Pricing Method formula while maintaining exisiting Pricing Method", "B. Existing Pricing Method is permanetly replaced with new Pricing Method until next recalculation", "C. Temporarily prevent the Price Item's price from being modified using the selected Pricing Method"],
+        correct: 0 // 
+    },
+    {
+        question: "What level of the Pricing Hierarchy is a Pricing Level?",
+        choices: ["A. 1", "B. 2", "C. 3", "D. 4"],
+        correct: 1 // 
+    },
+    {
+        question: "Can I change the dimension scope of an existing Pricing Level?",
+        choices: ["A. Yes", "B. No"],
+        correct: 1 // 
+    },
+    {
+        question: "Pricing Levels require an upload code?",
+        choices: ["A. True", "B. False"],
+        correct: 0 // 
+    },
+    {
+        question: "Setting a dimension as 'required' when configuring a Component Type usage restriction means?",
+        choices: ["A. The dimension is a required dimension when configuring a Pricing Level", "B. The dimension is required in all Master Price Lists"],
+        correct: 0 // 
+    },
+    {
+        question: "If I have a Price Record that is valid from today’s date till forever, how many Price Records will I have if I make a Price Item adjustment that is set for Dec 5th to Dec 30th?",
+        choices: ["A. 1", "B. 2", "C. 3", "D. 4"],
+        correct: 2 // 
+    },
+    {
+        question: "Enabling Scale Break (as well as other Component Types) occurs in what area of the component type configuration window?",
+        choices: ["A. Price Details", "B. Usage Restrictions", "C. Calculation Type"],
+        correct: 0 // 
+    },
+    {
+        question: "Which is not a Scale By option?",
+        choices: ["A. Quantity", "B. Revenue", "C. Volume", "D. Discount"],
+        correct: 3 // 
+    },
+    {
+        question: "Which combination are valid Scale Break calculation types?",
+        choices: ["A. Graduated and Cumulative", "B. Cumulative and Revenue", "C. Revenue and Graduated", "D. Discount and Graduated"],
+        correct: 0 // 
+    },
+    {
+        question: "Which combination are valid Scale Break offset types?",
+        choices: ["A. Margin and Percent", "B. Numeric and Percent", "C. Numeric and Margin", "D. Quantity and Volume"],
+        correct: 1 // 
+    },
+    {
+        question: "Scale Breaks can be used to offer Volume-Based Discounts Incentives or Surcharge Pricing?",
+        choices: ["A. True", "B. False"],
+        correct: 0 // 
+    },
+    {
+        question: "Can I go into an existing Component Type and modify the settings to make it available for Scale Breaks?",
+        choices: ["A. Yes", "B. No"],
+        correct: 1 // 
+    },
+    {
+        question: "What happens if you set an Intraday price item start date before an existing price record?",
+        choices: ["A. The system throws an error and prevents you from setting an earlier start date.", "B. Existing price records are unaffected", "C. New start date truncates old start date; Spliced records*"],
+        correct: 2 // 
+    },
+    {
+        question: "Can you change Intraday prices to go through an approval workflow instead of being auto-approved?",
+        choices: ["A. Yes", "B. No"],
+        correct: 1 // 
+    },
+    {
+        question: "Where do you change the default start time (in the adjust price window) for Intraday prices?",
+        choices: ["A. In the Component Type configuration window", "B. Advanced Settings", "C. System Parameters"],
+        correct: 2 // 
+    },
+    {
+        question: "What does Intraday pricing allow you to do?",
+        choices: ["A. Automatically Approve Prices", "B. Specify a time of day to trigger a Price Change", "C. Set prices multiple times per day", "D. All of the Above"],
+        correct: 3 // 
+    },
+   
+    {
+        question: "Conversions have been loaded for USD to JPY.  A Price Item is priced in USD, will you be able to adjust the price of the price item by a JPY value?",
+        choices: ["A. Yes, as long as the exchange rate is defined for USD to JPY", "B. No, The exchange rate must be defined forward and backward and will display an error", "C. Yes, but the exchange rate will default to USD and display an error"],
+        correct: 1 // 
+    },
+    {
+        question: "Where is the default bridge currency defined?",
+        choices: ["A. In the SCF as 'GlobalCurrencyCode='", "B. System Parameters", "C. In the SCF as 'BridgeCurrencyCode='"],
+        correct: 0 // 
+    },
+    {
+        question: "Can you define a customer-specific exchange rate in PROS Pricing?",
+        choices: ["A. Yes, using Negotiated Exchange Rates", "B. No, only for Product Dimension", "C. Yes, using Default Exchange Rates"],
+        correct: 0 // 
+    },
+    {
+        question: "Can you set a PRODUCT unit of measure to use an alternate PRODUCT-specific unit of measure?",
+        choices: ["A. Yes. Product is the only dimension that can be used.", "B. No, Customer is the only dimension that can be used", "C. Yes, all dimensions can use PRODUCT-specific unit of measure"],
+        correct: 0 // 
+    },
+    {
+        question: "What is the definition of the term 'Dimension' as it pertains to unit of measure conversion and loading?",
+        choices: ["A. Dimensions and Levels", "B. A Group of Units", "C. Sorting and Filtering"],
+        correct: 1 // 
+    },
+    {
+        question: "There is a defined unit of measure Case which is equal to 100 Each unit.  Will PROS Pricing be able to handle pricing if I need to sell a Price Item at 80 Each per Case?",
+        choices: ["A. No, PROS Pricing only supports fixed unit pricing", "B. Yes, using Product Specific Unit of Measure", "C. Yes, but it requires custom programming and is not standard functionality."],
+        correct: 1 // 
+    }
+];
+
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        const answeredQuestions = Array(questions.length).fill(false);
+
+       function loadQuestion() {
+    const questionText = document.getElementById("question-text");
+    const choicesList = document.getElementById("choices-list");
+    const currentQuestion = questions[currentQuestionIndex];
+    const prevButton = document.querySelector("#navigation-container button:nth-child(1)");
+
+    questionText.textContent = currentQuestion.question;
+    choicesList.innerHTML = "";
+
+    currentQuestion.choices.forEach((choice, index) => {
+        const choiceButton = document.createElement("button");
+        choiceButton.textContent = choice;
+        choiceButton.onclick = () => checkAnswer(index);
+        choicesList.appendChild(document.createElement("li")).appendChild(choiceButton);
+    });
+
+    if (currentQuestionIndex === 0) {
+        prevButton.style.display = "none";
+    } else {
+        prevButton.style.display = "inline-block";
+    }
+}
+
+        function checkAnswer(selectedIndex) {
+            if (answeredQuestions[currentQuestionIndex]) {
+                const currentQuestion = questions[currentQuestionIndex];
+                alert(`You've answered this question already!\nCorrect Answer: ${currentQuestion.choices[currentQuestion.correct]}`);
+                return;
+            }
+
+            const currentQuestion = questions[currentQuestionIndex];
+
+            if (selectedIndex === currentQuestion.correct) {
+                score++;
+                updateScore();
+                showCorrectOverlay();
+            } else {
+                showWrongOverlay();
+            }
+
+            answeredQuestions[currentQuestionIndex] = true;
+        }
+
+       function showCorrectOverlay() {
+    const correctOverlay = document.getElementById("correct-overlay");
+    correctOverlay.style.display = "block";
+
+    // Play the sound
+    const correctSound = document.getElementById("correct-sound");
+    correctSound.play();
+
+    setTimeout(() => {
+        correctOverlay.style.display = "none";
+        showResult();
+    }, 1500); // Display "Correct" for 1.5 seconds
+}
+
+        function showWrongOverlay() {
+            const wrongOverlay = document.getElementById("wrong-overlay");
+            wrongOverlay.style.display = "block";
+            
+             // Play the sound
+    const correctSound = document.getElementById("incorrect-sound");
+    correctSound.play();
+            setTimeout(() => {
+                wrongOverlay.style.display = "none";
+                showResult();
+            }, 1500); // Display "Wrong Answer" for 1.5 seconds
+        }
+
+        function showResult() {
+            const resultText = document.getElementById("result-text");
+            const resultContainer = document.getElementById("result-container");
+
+            resultText.textContent = `Your Score: ${score} out of ${questions.length}`;
+            resultContainer.style.display = "block";
+        }
+
+        function updateScore() {
+            const scoreText = document.getElementById("score-text");
+            scoreText.textContent = `Score: ${score} out of ${questions.length}`;
+        }
+
+        function nextQuestion() {
+    if (answeredQuestions[currentQuestionIndex]) {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            loadQuestion();
+            document.getElementById("result-container").style.display = "none";
+        } else {
+            document.getElementById("question-container").innerHTML = "<h2>Quiz Completed!</h2>";
+            hideNavigationButtons();
+        }
+    } else {
+        alert("Oops! You didn't answer the question.");
+    }
+}
+
+function previousQuestion() {
+    if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+        document.getElementById("result-container").style.display = "none";
+    }
+    hideNavigationButtons();
+}
+
+function hideNavigationButtons() {
+    const prevButton = document.querySelector("#navigation-container button:nth-child(1)");
+    const nextButton = document.querySelector("#navigation-container button:nth-child(2)");
+
+    if (currentQuestionIndex === 0) {
+        prevButton.style.display = "none";
+    } else {
+        prevButton.style.display = "inline-block";
+    }
+
+    nextButton.style.display = "none"; // Hide "Next Question" button in the "Quiz Completed" section
+      prevButton.style.display = "none"; // Hide "Previous Question" button in the "Quiz Completed" section
+}
+
+        loadQuestion();
+    </script>
+</body>
+</html>
