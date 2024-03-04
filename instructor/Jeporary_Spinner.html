@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random Team Selector</title>
+<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Titillium Web', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    .red-text {
+        font-size: 2em; /* Twice as big */
+        font-weight: bold; /* Bold */
+    }
+
+    #teamCheckboxes {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    #teamCheckboxes label {
+        margin-right: 10px;
+    }
+
+    #teamCheckboxes input[type="checkbox"] {
+        display: none;
+    }
+
+    #teamCheckboxes label {
+        display: inline-block;
+        padding: 8px 16px;
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        cursor: pointer;
+    }
+
+    #teamCheckboxes label:hover {
+        background-color: #ddd;
+    }
+
+    #teamCheckboxes input[type="checkbox"]:checked + label {
+        background-color: #ccc;
+    }
+
+    #teamCheckboxes input[type="checkbox"]:checked + label:before {
+        content: "\2713";
+        color: #fff;
+    }
+
+    #selectionHistoryContainer {
+        width: 850px;
+        height: 460px;
+        border: 2px solid #333;
+        background-color: #f5f5f5;
+        padding: 10px;
+        overflow: auto;
+    }
+
+    #selectionHistory {
+        display: grid;
+        grid-template-columns: repeat(10, auto);
+        grid-template-rows: repeat(10, auto);
+        gap: 5px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    #selectionHistory li {
+        border: 1px solid #ccc;
+        padding: 10px;
+    }
+
+    /* Updated colors for specific teams */
+    #selectionHistory li.team1 { background-color: #00468b; color: white; }
+    #selectionHistory li.team2 { background-color: #08afff; color: black; }
+    #selectionHistory li.team3 { background-color: #02c795; color: black; }
+    #selectionHistory li.team4 { background-color: red; color: white; }
+    #selectionHistory li.team5 { background-color: #0074c7; color: white; }
+</style>
+</head>
+<body>
+    <div class="container">
+        <h1>Random Team Selector</h1>
+        <div id="teamCheckboxes">
+            <input type="checkbox" id="team1Checkbox" checked><label for="team1Checkbox">Team 1</label>
+            <input type="checkbox" id="team2Checkbox" checked><label for="team2Checkbox">Team 2</label>
+            <input type="checkbox" id="team3Checkbox" checked><label for="team3Checkbox">Team 3</label>
+            <input type="checkbox" id="team4Checkbox" checked><label for="team4Checkbox">Team 4</label>
+            <input type="checkbox" id="team5Checkbox" checked><label for="team5Checkbox">Team 5</label>
+        </div>
+        <button onclick="selectRandomTeam()">Select Random Team</button>
+        <p id="selectedTeam"></p>
+
+        <h2>Selection History</h2>
+        <div id="selectionHistoryContainer">
+            <ul id="selectionHistory"></ul>
+        </div>
+    </div>
+
+    <script>
+        var previousTeam = null;
+        var selectionHistory = [];
+        var colors = {
+            "Team 1": "#00468b", // Dark blue
+            "Team 2": "#08afff",
+            "Team 3": "#02c795",
+            "Team 4": "red",
+            "Team 5": "#0074c7"
+        };
+
+        function selectRandomTeam() {
+            var teams = [];
+            if (document.getElementById("team1Checkbox").checked && previousTeam !== "Team 1") teams.push("Team 1");
+            if (document.getElementById("team2Checkbox").checked && previousTeam !== "Team 2") teams.push("Team 2");
+            if (document.getElementById("team3Checkbox").checked && previousTeam !== "Team 3") teams.push("Team 3");
+            if (document.getElementById("team4Checkbox").checked && previousTeam !== "Team 4") teams.push("Team 4");
+            if (document.getElementById("team5Checkbox").checked && previousTeam !== "Team 5") teams.push("Team 5");
+
+            if (teams.length === 0) {
+                alert("Please select at least one team.");
+                return;
+            }
+
+            var randomIndex = Math.floor(Math.random() * teams.length);
+            var selectedTeam = teams[randomIndex];
+
+            var selectedTeamElement = document.getElementById("selectedTeam");
+            selectedTeamElement.textContent = selectedTeam;
+            selectedTeamElement.classList.add("red-text");
+            selectedTeamElement.style.color = colors[selectedTeam]; // Set text color based on team color
+
+            previousTeam = selectedTeam;
+            selectionHistory.push(selectedTeam);
+
+            updateSelectionHistory();
+        }
+
+        function updateSelectionHistory() {
+            var historyList = document.getElementById("selectionHistory");
+            historyList.innerHTML = "";
+
+            for (var i = 0; i < Math.min(selectionHistory.length, 100); i++) {
+                var listItem = document.createElement("li");
+                listItem.textContent = selectionHistory[i];
+                listItem.classList.add("team" + (Object.keys(colors).indexOf(selectionHistory[i]) + 1)); // Assigning class based on team
+                historyList.appendChild(listItem);
+            }
+        }
+    </script>
+</body>
+</html>
