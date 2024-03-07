@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secret Message Game with Questions</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web">
+<style>
+  
+    
+    body {
+        font-family: 'Titillium Web', sans-serif;
+        text-align: center;
+        padding-top: 40px;
+    }
+    .button {
+        background-color: #04AA6D; /* Green */
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        margin-left: 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .letterBox {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        margin: 5px;
+        border: 1px solid black;
+        font-size: 20px;
+        line-height: 30px;
+    }
+    .spaceBox {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        margin: 5px;
+        font-size: 20px;
+        line-height: 30px;
+    }
+    .messageWindow {
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 400px;
+        border-radius: 10px;
+    }
+    .greenWindow {
+        background-color: #4CAF50; /* Green */
+        color: white;
+    }
+    .redWindow {
+        background-color: #f44336; /* Red */
+        color: white;
+    }
+    #result {
+        padding: 10px 0; /* Padding top and bottom */
+    }
+    #options {
+        padding-bottom: 20px; /* Padding bottom */
+    }
+</style>
+</head>
+<body>
+     <img src="https://s28006.pcdn.co/wp-content/uploads/2023/07/PROS_Logo_AI_FA_v1r5_FC1.png" alt="Your Image Description" width="175" height="35">
+    <h1>PROS Pricing - Secret Message Game</h1>
+    <div id="questionContainer">
+        <h2>Question:</h2>
+        <p id="questionText"></p>
+        <div id="options"></div>
+        <button class="button" onclick="checkAnswer()">Submit Answer</button>
+    </div>
+    <div id="result"></div>
+    <div id="message" style="display: none;">No letter revealed</div>
+    <div id="guessesRemaining"></div>
+    <div>
+        <label for="guessInput">Guess the Secret Message:</label>
+        <input type="text" id="guessInput" style="width: auto;">
+        <button class="button" onclick="checkSecretMessage()">Submit Guess</button>
+    </div>
+
+    <script>
+        const questions = [
+          
+    {
+        question: "What is the primary purpose of PROS Pricing within the PROS Smart Price Management?",
+        options: [
+            "A - Set, Manage, and Publish Prices",
+            "B - Analyze Historical Price Records and Output Reports",
+            "C - Manage Inventory and Produce Quotes"
+        ],
+        answer: "A - Set, Manage, and Publish Prices"
+    },
+    {
+        question: "What does output mean?",
+        options: [
+            "A - Data is sent to an external system",
+            "B - New Price is sent to Approver",
+            "C - Master Price List has been exported"
+        ],
+        answer: "A - Data is sent to an external system"
+    },
+    {
+        question: "Which is not considered a component type?",
+        options: [
+            "A - Discount",
+            "B - Basic",
+            "C - Scaled",
+            "D - Intraday / Timestamp"
+        ],
+        answer: "A - Discount"
+    },
+    {
+        question: "A component type upload code is optional unless price output is required?",
+        options: [
+            "A - False",
+            "B - True"
+        ],
+        answer: "B - True"
+    },
+    {
+        question: "What is the Filter bar?",
+        options: [
+            "A - Allows users to easily filter User Profiles",
+            "B - Allows users to filter by dimensional scope within the Master Price List",
+            "C - Allows users to access and filter System Administrator tools"
+        ],
+        answer: "B - Allows users to filter by dimensional scope within the Master Price List"
+    },
+    {
+        question: "What is an upload code?",
+        options: [
+            "A - Code to Input / Output data to external system",
+            "B - Code to only Output data to external system",
+            "C - Code to only Input data to external system"
+        ],
+        answer: "A - Code to Input / Output data to external system"
+    },
+    {
+        question: "When does a New Price output to an external system and become a current price?",
+        options: [
+            "A - After Approver Approves and Submits Decision",
+            "B - Immediately after submitting*",
+            "C - After Approver Approves"
+        ],
+        answer: "A - After Approver Approves and Submits Decision"
+    },
+    {
+        question: "What are the steps an approver must go through for a price to output?",
+        options: [
+            "A - Approve Price",
+            "B - Approve & Submit Price",
+            "C - Validate Change & Submit Price"
+        ],
+        answer: "B - Approve & Submit Price"
+    },
+    {
+        question: "What level of the Pricing Hierarchy is a Price Item?",
+        options: [
+            "A - 1",
+            "B - 2",
+            "C - 3"
+        ],
+        answer: "C - 3"
+    },
+    {
+        question: "A Price Item dimensional scope is defined at what level of the Pricing Hierarchy?",
+        options: [
+            "A - Component Type",
+            "B - Pricing Level",
+            "C - Master Price List"
+        ],
+        answer: "B - Pricing Level"
+    },
+    {
+        question: "What level of the Pricing Hierarchy is a Pricing Level?",
+        options: [
+            "A - 1",
+            "B - 2",
+            "C - 3"
+        ],
+        answer: "B - 2"
+    },
+    {
+        question: "What is the purpose of setting an Effective Start Date?",
+        options: [
+            "A - To immediately publish a new price using Todays Date",
+            "B - Prevents Price from going Live (Publishing) until the Effective Start Date",
+            "C - To ensure all Price Items have a consistent start date"
+        ],
+        answer: "B - Prevents Price from going Live (Publishing) until the Effective Start Date"
+    },
+    {
+        question: "Changing the effective end date on a price item to the date in the past will result in?",
+        options: [
+            "A - Price Item is removed from Master Price List",
+            "B - Price Items new price will end, and new price will go into effect",
+            "C - Previous Price goes into effect"
+        ],
+        answer: "A - Price Item is removed from Master Price List"
+    },
+    {
+        question: "Can I change the dimension scope of an existing Pricing Level?",
+        options: [
+            "A - Yes",
+            "B - No"
+        ],
+        answer: "B - No"
+    },
+    {
+        question: "Pricing Levels require an upload code?",
+        options: [
+            "A - True",
+            "B - False"
+        ],
+        answer: "A - True"
+    },
+    {
+        question: "Setting a dimension as required when configuring a Component Type usage restriction means?",
+        options: [
+            "A - The dimension is a required dimension when configuring a Pricing Level",
+            "B - The dimension is required in all Master Price Lists"
+        ],
+        answer: "A - The dimension is a required dimension when configuring a Pricing Level"
+    },
+    {
+        question: "If I have a Price Record that is valid from today’s date till forever, how many Price Records will I have if I make a Price Item adjustment that is set for Dec 5th to Dec 30th?",
+        options: [
+            "A - 1",
+            "B - 2",
+            "C - 3"
+        ],
+        answer: "C - 3"
+    },
+    {
+        question: "Which is not a Scale By option?",
+        options: [
+            "A - Discount",
+            "B - Quantity",
+            "C - Revenue"
+        ],
+        answer: "A - Discount"
+    },
+    {
+        question: "Which combination are valid Scale Break calculation types?",
+        options: [
+            "A - Cumulative and Revenue",
+            "B - Graduated and Cumulative",
+            "C - Discount and Graduated"
+        ],
+        answer: "B - Graduated and Cumulative"
+    },
+    {
+        question: "Which combination are valid Scale Break offset types?",
+        options: [
+            "A - Margin and Percent",
+            "B - Quantity and Volume",
+            "C - Numeric and Percent"
+        ],
+        answer: "C - Numeric and Percent"
+    },
+    {
+        question: "Enabling Scale Break (as well as other Component Types) occurs in what area of the component type configuration window?",
+        options: [
+            "A - Usage Restrictions",
+            "B - Price Details",
+            "C - Calculation Type"
+        ],
+        answer: "B - Price Details"
+    },
+    {
+        question: "Scale Breaks can be used to offer Volume-Based Discounts Incentives or Surcharge Pricing?",
+        options: [
+            "A - True",
+            "B - False"
+        ],
+        answer: "A - True"
+    },
+    {
+        question: "Can I go into an existing Component Type and modify the settings to make it available for Scale Breaks?",
+        options: [
+            "A - Yes",
+            "B - No"
+        ],
+        answer: "B - No"
+    },
+    {
+        question: "What happens if you set an Intraday price item start date before an existing price record?",
+        options: [
+            "A - New start date truncates old start date; Spliced records*",
+            "B - The system throws an error and prevents you from setting an earlier start date.",
+            "C - Existing price records are unaffected"
+        ],
+        answer: "A - New start date truncates old start date; Spliced records*"
+    },
+    {
+        question: "Can you change Intraday prices to go through an approval workflow instead of being auto-approved?",
+        options: [
+            "A - Yes",
+            "B- No"
+        ],
+        answer: "B - No"
+    },
+    {
+        question: "Where do you change the default start time (in the adjust price window) for Intraday prices??",
+        options: [
+            "A - System Parameters",
+            "B - In the Component Type configuration window",
+            "C - Advanced Settings"
+        ],
+        answer: "A - System Parameters"
+    },
+    {
+        question: "Conversions have been loaded for USD to JPY.  A Price Item is priced in USD, will you be able to adjust the price of the price item by a JPY value?",
+        options: [
+            "A - No, The exchange rate must be defined forward and backward and will display an error",
+            "B - Yes, as long as the exchange rate is defined for USD to JPY",
+            "C - Yes, but the exchange rate will default to USD and display an error"
+        ],
+        answer: "A - No, The exchange rate must be defined forward and backward and will display an error"
+    },
+    {
+        question: "What does Intraday pricing allow you to do?",
+        options: [
+            "A - Automatically Approve Prices",
+            "B - Set prices multiple times per day",
+            "C - All of the Above"
+        ],
+        answer: "C - All of the Above"
+    },
+    {
+        question: "Where is the default bridge currency defined?",
+        options: [
+            "A - In the SCF as GlobalCurrencyCode= ",
+            "B - System Parameters",
+            "C - In the SCF as BridgeCurrencyCode="
+        ],
+        answer: "A - In the SCF as GlobalCurrencyCode= "
+    },
+    {
+        question: "Can you define a customer-specific exchange rate in PROS Pricing?",
+        options: [
+            "A - Yes, using Negotiated Exchange Rates",
+            "B - No, only for Product Dimension",
+            "C - Yes, using Default Exchange Rates"
+        ],
+        answer: "A - Yes, using Negotiated Exchange Rates"
+    },
+    {
+        question: "Can you set a PRODUCT unit of measure to use an alternate PRODUCT-specific unit of measure?",
+        options: [
+            "A - Yes. Product is the only dimension that can be used.",
+            "B - No, Customer is the only dimension that can be used",
+            "C - Yes, all dimensions can use PRODUCT-specific unit of measure"
+        ],
+        answer: "A - Yes. Product is the only dimension that can be used."
+    },
+    {
+        question: "What is the definition of the term Dimension as it pertains to unit of measure conversion and loading?",
+        options: [
+            "A - A Group of Units",
+            "B - Dimensions and Levels",
+            "C - Sorting and Filtering"
+        ],
+        answer: "A - A Group of Units"
+    }
+
+
+        ];
+
+        let secretMessage = 'SMART PRICE MANAGEMENT';
+        let guessedLetters = secretMessage.replace(/[A-Z]/g, '_').split('');
+        let uniqueLettersCount = (secretMessage.match(/[A-Z]/g) || []).reduce((acc, curr) => {
+            if (!acc.includes(curr)) {
+                acc.push(curr);
+            }
+            return acc;
+        }, []).length;
+        let guessesRemaining = uniqueLettersCount + 2; // 2 additional guesses
+        let secretMessageGuessesRemaining = 3;
+
+        function startGame() {
+            revealLetter();
+            displayQuestion();
+            updateGuessesRemaining();
+            resizeGuessInput(); // Resize input field on game start
+        }
+
+        function displayQuestion() {
+            const randomIndex = Math.floor(Math.random() * questions.length);
+            const question = questions[randomIndex];
+            document.getElementById('questionText').textContent = question.question;
+            const optionsDiv = document.getElementById('options');
+            optionsDiv.innerHTML = '';
+            question.options.forEach(option => {
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'answerOption';
+                radio.value = option;
+                optionsDiv.appendChild(radio);
+                const label = document.createElement('label');
+                label.textContent = option;
+                optionsDiv.appendChild(label);
+                optionsDiv.appendChild(document.createElement('br'));
+            });
+        }
+
+        function checkAnswer() {
+            const selectedOption = document.querySelector('input[name="answerOption"]:checked');
+            if (!selectedOption) {
+                alert('Please select an answer.');
+                return;
+            }
+            guessesRemaining--; // Deduct from guessesRemaining
+            const selectedAnswer = selectedOption.value;
+            const currentQuestion = questions.find(q => q.question === document.getElementById('questionText').textContent);
+            if (selectedAnswer === currentQuestion.answer) {
+                revealLetter();
+                document.getElementById('message').style.display = 'none';
+            } else {
+                document.getElementById('message').style.display = 'block';
+                alert('Incorrect answer. The correct answer is: ' + currentQuestion.answer);
+            }
+            displayQuestion();
+            updateGuessesRemaining(); // Update guesses remaining after each answer
+        }
+
+        function revealLetter() {
+            const unrevealedIndices = guessedLetters.map((letter, index) => letter === '_' ? index : -1).filter(index => index !== -1);
+            if (unrevealedIndices.length > 0) {
+                const randomIndex = unrevealedIndices[Math.floor(Math.random() * unrevealedIndices.length)];
+                const letterToReveal = secretMessage[randomIndex];
+                for (let i = 0; i < secretMessage.length; i++) {
+                    if (secretMessage[i] === letterToReveal) {
+                        guessedLetters[i] = letterToReveal;
+                    }
+                }
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '';
+            guessedLetters.forEach(letter => {
+                if (letter === ' ') {
+                    const spaceBox = document.createElement('div');
+                    spaceBox.classList.add('spaceBox');
+                    spaceBox.textContent = ' ';
+                    resultDiv.appendChild(spaceBox);
+                } else {
+                    const letterBox = document.createElement('div');
+                    letterBox.classList.add('letterBox');
+                    letterBox.textContent = letter;
+                    resultDiv.appendChild(letterBox);
+                }
+            });
+        }
+
+        function updateGuessesRemaining() {
+            document.getElementById('guessesRemaining').textContent = 'Guesses remaining: ' + guessesRemaining;
+            if (guessesRemaining === 1) {
+                alert('You must Guess the Secret Message or forfeit the game');
+            } else if (guessesRemaining === 0) {
+                alert('No more guesses remaining. Please play again! ');
+                resetGame();
+            }
+        }
+
+        function checkSecretMessage() {
+            const guessInput = document.getElementById('guessInput').value.toUpperCase().replace(/\s/g, ''); // Remove spaces
+            secretMessageGuessesRemaining--;
+            if (guessInput === secretMessage.replace(/[^A-Z]/g, '')) {
+                // Correct guess
+                displayMessage('Congratulations! You\'ve solved the secret message. You guessed  ' + secretMessage, 'greenWindow');
+                resetGame();
+            } else {
+                // Incorrect guess
+                const message = 'Sorry! You didn\'t solve the secret message. You have ' + secretMessageGuessesRemaining + ' remaining.';
+                displayMessage(message, 'redWindow');
+                if (secretMessageGuessesRemaining === 0) {
+                    alert('No more guesses remaining for the secret message. Please play again! ' );
+                    resetGame();
+                }
+            }
+        }
+
+        function displayMessage(message, styleClass) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.classList.add('messageWindow', styleClass);
+            document.body.appendChild(messageDiv);
+            // Remove message after 3 seconds
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        function resetGame() {
+            guessedLetters = secretMessage.replace(/[A-Z]/g, '_').split('');
+            uniqueLettersCount = (secretMessage.match(/[A-Z]/g) || []).reduce((acc, curr) => {
+                if (!acc.includes(curr)) {
+                    acc.push(curr);
+                }
+                return acc;
+            }, []).length;
+            guessesRemaining = uniqueLettersCount + 2; // Reset to original plus 2
+            secretMessageGuessesRemaining = 3; // Reset secret message guesses remaining
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('guessInput').value = ''; // Clear guess input
+            startGame();
+        }
+
+        // Resize input field to fit the secret message plus 20px
+        function resizeGuessInput() {
+            const secretMessageLength = secretMessage.replace(/[^A-Za-z]/g, '').length;
+            const guessInput = document.getElementById('guessInput');
+            guessInput.style.width = (secretMessageLength * 20) + 'px'; // Each character approximately 20px width
+        }
+
+        startGame();
+    </script>
+</body>
+</html>
