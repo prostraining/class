@@ -6,6 +6,8 @@
 <title>Secret Message Game with Questions</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web">
 <style>
+  
+    
     body {
         font-family: 'Titillium Web', sans-serif;
         text-align: center;
@@ -80,11 +82,8 @@
         <button class="button" onclick="checkSecretMessage()">Submit Guess</button>
     </div>
 
-    <!-- Section to display the last revealed letterbox result -->
-    <section id="lastRevealedResult"></section>
-
     <script>
-          const questions = [
+        const questions = [
           
     {
         question: "What is the primary purpose of PROS Pricing within the PROS Smart Price Management?",
@@ -440,7 +439,6 @@
                     }
                 }
                 updateDisplay();
-                document.getElementById('lastRevealedResult').textContent = 'Last revealed letter: ' + letterToReveal;
             }
         }
 
